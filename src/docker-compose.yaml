@@ -1,0 +1,60 @@
+version: "3.8"
+
+services:
+  qa-chatbot:
+    build:
+      context: .
+      dockerfile: DockerFile
+    container_name: qa-chatbot-service
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./chat_history.db
+      - MODEL_PATH=/app/merged_model
+      - LOG_LEVEL=INFO
+      - DEBUG=False
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 2G
+
+  # Optional: Add Redis for caching
+  redis:
+    image: redis:7-alpine
+    container_name: qa-chatbot-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  # Optional: Add PostgreSQL for production
+  # postgres:
+  #   image: postgres:15
+  #   container_name: qa-chatbot-postgres
+  #   environment:
+  #     POSTGRES_DB: chatbot
+  #     POSTGRES_USER: chatbot
+  #     POSTGRES_PASSWORD: chatbot_password
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   restart: unless-stopped
+
+volumes:
+  redis_data:
+  # postgres_data:
