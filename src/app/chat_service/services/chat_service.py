@@ -1,4 +1,4 @@
-from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
+from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig, pipeline
 import torch
 import logging
 import time
@@ -26,8 +26,17 @@ class ChatService:
 
             start_time = time.time()
 
-            self.model = AutoModelForCausalLM(model_path,
-                                            device="auto")
+            self.model = AutoModelForCausalLM.from_pretrained(
+                model_path,
+                torch_dtype=torch.float16,
+                low_cpu_mem_usage=True
+            )
+
+            # Move model to device manually
+            if torch.cuda.is_available():
+                self.model = self.model.to("cuda")
+            else:
+                self.model = self.model.to("cpu")
             self.model.config.use_cache = False
             self.model.config.pretraining_tp = 1
 
@@ -87,7 +96,7 @@ class ChatService:
                 num_beams=4,
                 early_stopping=True,  # Dừng sớm khi tìm ra câu trả lời tốt
                 repetition_penalty=1.5,  # Tăng để giảm lặp
-                max_new_tokens=150,
+                max_new_tokens=max_tokens,
                 eos_token_id=self.tokenizer.eos_token_id
             )
 

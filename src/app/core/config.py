@@ -8,14 +8,14 @@ class Settings(BaseSettings):
     APP_NAME: str = "QA Chatbot Service"
     VERSION: str = "1.0.0"
     DEBUG: bool = False
-    HOST: str = "0.0.0.0"
+    HOST: str = "localhost"
     PORT: int = 8000
 
     # CORS settings
     ALLOWED_ORIGINS: List[str] = ["*"]
 
     # Model settings
-    MODEL_PATH: str = "merged_model"
+    MODEL_PATH: str = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "merged_model")
     MAX_TOKENS: int = 200
     TEMPERATURE: float = 0.7
     TOP_P: float = 1.0

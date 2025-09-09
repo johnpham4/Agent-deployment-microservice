@@ -17,9 +17,9 @@ class Message(BaseModel):
 
 class ChatRequest(BaseModel):
     message: str = Field(..., min_length=1, max_length=1000, description="User's question or message")
-    session_id: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()), description="Session ID for conversation tracking")
+    # session_id: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()), description="Session ID for conversation tracking")
     max_tokens: Optional[int] = Field(default=200, ge=1, le=1000, description="Maximum tokens to generate")
-    temperature: Optional[float] = Field(default=0.7, ge=0.0, le=2.0, description="Temperature for text generation")
+    # temperature: Optional[float] = Field(default=0.7, ge=0.0, le=2.0, description="Temperature for text generation")
 
     @field_validator('message')
     @classmethod
@@ -30,7 +30,6 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     response: str
-    session_id: str
     timestamp: float = Field(default_factory=lambda: time.time())
     response_time: Optional[float] = None
     model_used: str = "custom-llama"

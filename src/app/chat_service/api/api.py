@@ -40,8 +40,8 @@ async def generate_chat_response(request: ChatRequest):
             ai_response = chatService.generate_response(
                 user_input=request.message,
                 max_tokens=request.max_tokens,
-                temperature=request.temperature
             )
+
         except Exception as e:
             logger.error(f"Error generating AI response: {e}")
             raise HTTPException(
@@ -54,7 +54,6 @@ async def generate_chat_response(request: ChatRequest):
         # Return response (không save database)
         return ChatResponse(
             response=ai_response,
-            session_id=request.session_id,
             response_time=response_time,
             model_used="custom-llama",
             timestamp=time.time()
@@ -122,9 +121,16 @@ async def get_model_status():
     Get model status and information
     """
     try:
+        import os
+        model_path = settings.MODEL_PATH
+        path_exists = os.path.exists(model_path)
+
         return {
             "model_loaded": chatService.is_model_loaded(),
-            "model_path": settings.MODEL_PATH,
+            "model_path": model_path,
+            "path_exists": path_exists,
+            "absolute_path": os.path.abspath(model_path),
+            "working_dir": os.getcwd(),
             "device": chatService.device if hasattr(chatService, 'device') else "unknown",
         }
     except Exception as e:
