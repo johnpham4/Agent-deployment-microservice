@@ -131,7 +131,7 @@ class TestAPIEndpoints:
     def setup_method(self):
         """Setup cho mỗi test"""
         # Import main sau khi mock transformers
-        from main import app
+        from src.app.chat_service.main import app
         self.client = TestClient(app)
 
     def test_health_endpoint(self, mock_pipeline, mock_tokenizer, mock_model):

@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     ALLOWED_ORIGINS: List[str] = ["*"]
 
     # Model settings
-    MODEL_PATH: str = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "merged_model")
+    MODEL_PATH: str = ""  # Must be set in .env file
     MAX_TOKENS: int = 200
     TEMPERATURE: float = 0.7
     TOP_P: float = 1.0
@@ -30,8 +30,8 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
     LOG_FILE: str = "logs/app.log"
 
-    # Security settings
-    SECRET_KEY: str = "your-secret-key-here"
+    # Security settings - MUST BE SET IN .env FILE
+    SECRET_KEY: str = ""  # REQUIRED: Set this in .env file
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
     # Rate limiting
