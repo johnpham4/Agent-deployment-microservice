@@ -5,10 +5,13 @@ import uvicorn
 import logging
 from contextlib import asynccontextmanager
 import os
+import sys
 
-from chat_service.api.api import Router as ChatRouter
-from core.config import settings
-from chat_service.services.chat_service import chatService
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from api.api import Router as ChatRouter
+from ..core.config import settings
+from services.chat_service import chatService
 
 
 @asynccontextmanager
