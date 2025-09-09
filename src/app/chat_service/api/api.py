@@ -86,14 +86,12 @@ async def health_check():
             "version": "1.0.0",
             "model_loaded": chatService.is_model_loaded(),
             "memory_usage_mb": round(memory_usage_mb, 2),
-            "timestamp": time.time()
         }
     except Exception as e:
         logger.error(f"Health check error: {e}")
         return {
             "status": "unhealthy",
             "error": str(e),
-            "timestamp": time.time()
         }
 
 @router.post("/model/load")
@@ -109,7 +107,6 @@ async def load_model(model_path: Optional[str] = None):
             "success": True,
             "message": "Model loaded successfully",
             "model_path": model_path or settings.MODEL_PATH,
-            "timestamp": time.time()
         }
 
     except Exception as e:
@@ -129,7 +126,6 @@ async def get_model_status():
             "model_loaded": chatService.is_model_loaded(),
             "model_path": settings.MODEL_PATH,
             "device": chatService.device if hasattr(chatService, 'device') else "unknown",
-            "timestamp": time.time()
         }
     except Exception as e:
         logger.error(f"Error getting model status: {e}")
