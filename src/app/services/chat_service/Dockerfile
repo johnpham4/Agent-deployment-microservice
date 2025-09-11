@@ -1,5 +1,5 @@
 # Use official Python image with CUDA support if needed
-FROM python:3.11-slim
+FROM  pytorch/pytorch:2.8.0-cuda12.6-cudnn9-runtime
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -13,20 +13,19 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     build-essential \
     curl \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
 
 # Copy requirements first for better caching
 COPY requirements.txt /app/requirements.txt
 
-# Install Python dependencies
+# Install Python dependencies and clean up
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir -r requirements.txt && \
+    pip cache purge
 
 # Copy application code
-COPY app/ /app/
-
-# Copy model files (if they exist in the build context)
-COPY merged_model/ /app/merged_model/
+COPY .. /app/
 
 # Create logs directory
 RUN mkdir -p /app/logs

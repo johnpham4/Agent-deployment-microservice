@@ -15,24 +15,19 @@ class Settings(BaseSettings):
     ALLOWED_ORIGINS: List[str] = ["*"]
 
     # Model settings
-    MODEL_PATH: str = ""  # Must be set in .env file
+    MODEL_PATH: str = "../merged_model"  # Must be set in .env file
     MAX_TOKENS: int = 200
     TEMPERATURE: float = 0.7
     TOP_P: float = 1.0
 
     # Database settings
-    DATABASE_URL: str = "sqlite:///./chat_history.db"
+    # DATABASE_URL: str = "sqlite:///./chat_history.db"
 
-    # Redis settings (for caching)
-    REDIS_URL: str = "redis://localhost:6379"
 
     # Logging settings
     LOG_LEVEL: str = "INFO"
     LOG_FILE: str = "logs/app.log"
 
-    # Security settings - MUST BE SET IN .env FILE
-    SECRET_KEY: str = ""  # REQUIRED: Set this in .env file
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
     # Rate limiting
     RATE_LIMIT_PER_MINUTE: int = 60
@@ -53,6 +48,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         case_sensitive = True
+        extra = "ignore"  # Ignore extra fields
 
 
 settings = Settings()

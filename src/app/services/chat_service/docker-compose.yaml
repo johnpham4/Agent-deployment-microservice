@@ -1,0 +1,37 @@
+version: "3.8"
+services:
+  qa-chatbot:
+    image: chat-service:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chat-service
+    ports:
+      - "8000:8000"
+    environment:
+      - MODEL_PATH=/app/merged_model
+      - LOG_LEVEL=INFO
+      - DEBUG=False
+    # access to host machine to use gpu
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+volumes:
+  data: {}
+  # redis_data:
+  # postgres_data:

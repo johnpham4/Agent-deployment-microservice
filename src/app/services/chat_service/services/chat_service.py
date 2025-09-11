@@ -35,16 +35,18 @@ class ChatService:
             # Move model to device manually
             if torch.cuda.is_available():
                 self.model = self.model.to("cuda")
+                logger.info("device set to cuda")
             else:
                 self.model = self.model.to("cpu")
+                logger.info("device set to cpu")
             self.model.config.use_cache = False
             self.model.config.pretraining_tp = 1
 
             self.tokenizer = AutoTokenizer.from_pretrained(model_path)
-            self.tokenizer.add_special_tokens({'pad_token': '[PAD]'})
-            self.tokenizer.pad_token = self.tokenizer.eos_token
-            self.tokenizer.padding_side = "right"
-            self.tokenizer.chat_template = settings.CHAT_TEMPLATE
+            # self.tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+            # self.tokenizer.pad_token = self.tokenizer.eos_token
+            # self.tokenizer.padding_side = "right"
+            # self.tokenizer.chat_template = settings.CHAT_TEMPLATE
 
             try:
                 self.pipe = pipeline(
@@ -92,11 +94,11 @@ class ChatService:
 
             response = self.pipe(
                 prompt,
-                do_sample=False,
-                num_beams=4,
-                early_stopping=True,  # Dừng sớm khi tìm ra câu trả lời tốt
-                repetition_penalty=1.5,  # Tăng để giảm lặp
+                do_sample=True,
+                top_p=0.9,
+                temperature=0.7,
                 max_new_tokens=max_tokens,
+                repetition_penalty=1.2,
                 eos_token_id=self.tokenizer.eos_token_id
             )
 

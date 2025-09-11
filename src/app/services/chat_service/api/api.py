@@ -5,8 +5,8 @@ import time
 from typing import Optional
 
 # Import models và services
-from chat_service.dto.models import ChatRequest, ChatResponse, ErrorResponse
-from chat_service.services.chat_service import chatService
+from model.dto import ChatRequestDTO, ChatResponseDTO, ErrorResponseDTO
+from services.chat_service import chatService
 from core.config import settings
 
 # Setup logging
@@ -15,8 +15,8 @@ logger = logging.getLogger(__name__)
 # Tạo router
 router = APIRouter()
 
-@router.post("/generate", response_model=ChatResponse, status_code=status.HTTP_200_OK)
-async def generate_chat_response(request: ChatRequest):
+@router.post("/generate", response_model=ChatResponseDTO, status_code=status.HTTP_200_OK)
+async def generate_chat_response(request: ChatRequestDTO):
     """
     Generate AI response for user message
     """
@@ -52,7 +52,7 @@ async def generate_chat_response(request: ChatRequest):
         response_time = time.time() - start_time
 
         # Return response (không save database)
-        return ChatResponse(
+        return ChatResponseDTO(
             response=ai_response,
             response_time=response_time,
             model_used="custom-llama",

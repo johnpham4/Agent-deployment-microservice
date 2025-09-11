@@ -10,7 +10,7 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from api.api import Router as ChatRouter
-from ..core.config import settings
+from core.config import settings
 from services.chat_service import chatService
 
 
