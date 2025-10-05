@@ -1,0 +1,14 @@
+apiVersion: v2
+name: multi-agent-microservices
+description: A Multi-Agent Microservices platform with QA Chatbot and LLM models
+
+type: application
+
+version: 0.1.0
+appVersion: "1.0.0"
+home: https://github.com/johnpham4/Agent-deployment-microservice
+sources:
+  - https://github.com/johnpham4/Agent-deployment-microservice
+maintainers:
+  - email: minhjohn4@gmail.com
+    name: minhjohn04

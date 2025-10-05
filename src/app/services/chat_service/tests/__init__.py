@@ -1,1 +1,0 @@
-# QA Chatbot Tests Package

@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "llm-monitor&deployment"
+version = "0.1.0"
+description = ""
+authors = ["Minh Pham"]
+readme = "README.md"
+package-mode = true
+packages = [{ include = "src" }]
+
+[tool.poetry.dependencies]
+python = "3.11.9"
+pandas = "<2.2.0"  # <2.2.0 to be compatible with sqlalchemy<2.0, else error "AttributeError: 'Engine' object has no attribute 'cursor'"
+loguru = "^0.7.2"
+python-dotenv = "^1.0.1"
+pydantic = "^2.9.0"
+scikit-learn = "^1.5.1"
+evidently = "^0.4.37"
+mlflow = "^2.16.0"
+numpy = "<2.0"  # Numpy 2.0 causes a lot of compatibility error
+boto3 = "^1.35.37"
+datasets = "^2.21.0"  # To download the Amazon dataset
+
+[tool.poetry.group.dev.dependencies]
+jupyterlab = "^4.2.5"
+ipywidgets = "^8.1.5"
+black = "^24.8.0"
+isort = "^5.13.2"
+plotly = "^5.24.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

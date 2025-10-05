@@ -1,0 +1,54 @@
+# Image configuration
+image:
+  repository: minhjohn427/chat-service
+  tag: "0.0.1"
+  pullPolicy: Always
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+
+# Deployment configuration
+replicaCount: 3
+
+# Resource limits (reduced for development)
+resources:
+  limits:
+    cpu: 500m
+    memory: 1Gi
+  requests:
+    cpu: 100m
+    memory: 512Mi
+
+# Environment variables
+env:
+  MODEL_PATH: "/app/merged_model"
+  LOG_LEVEL: "INFO"
+  DEBUG: "false"
+
+# Ingress configuration
+ingress:
+  enabled: true
+  className: "nginx"
+  hosts:
+    - host: multi-agent-microservices.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# Persistence for model storage (disabled for now)
+persistence:
+  enabled: false
+  storageClass: ""
+  size: 10Gi
+  accessMode: ReadWriteOnce
+
+# Health checks
+healthCheck:
+  enabled: true
+  path: /health
+  initialDelaySeconds: 30
+  periodSeconds: 10
