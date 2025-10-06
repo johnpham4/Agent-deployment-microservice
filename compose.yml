@@ -1,41 +1,4 @@
 services:
-  # minio:
-  #   restart: always
-  #   image: minio/minio@sha256:2c8ac2a6255a2fa7b73a0a3647314c07121432b8ca1ce4ed8bfe31ca8495d7f7
-  #   container_name: mlflow_s3
-  #   ports:
-  #     - "9000:9000"
-  #     - "9001:9001"
-  #   command: server /data --console-address ':9001' --address ':9000'
-  #   environment:
-  #     - MINIO_ROOT_USER=${AWS_ACCESS_KEY_ID}
-  #     - MINIO_ROOT_PASSWORD=${AWS_SECRET_ACCESS_KEY}
-  #   volumes:
-  #     - ./data/mlflow/minio_data:/data
-  #   networks:
-  #     - llm-monitor
-
-  # mlflow_mc:
-  #   image: minio/mc@sha256:3adae97df95c66b301b25ca7b38a9d7cfbd93b8f0652687331d552cd046dbfc1
-  #   depends_on:
-  #     - minio
-  #   container_name: mlflow_mc
-  #   env_file:
-  #     - .env
-  #   entrypoint: >
-  #     /bin/sh -c "
-  #     /tmp/wait-for-it.sh minio:9000 &&
-  #     /usr/bin/mc alias set minio http://minio:9000 ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} &&
-  #     /usr/bin/mc mb --ignore-existing minio/mlflow &&
-  #     /usr/bin/mc mb --ignore-existing minio/data &&
-  #     /usr/bin/mc mb --ignore-existing minio/runs;
-  #     exit 0;
-  #     "
-  #   volumes:
-  #     - ./mlflow/wait-for-it.sh:/tmp/wait-for-it.sh
-  #   networks:
-  #     - llm-monitor
-
   mlflow_db:
     restart: always
     image: mysql/mysql-server@sha256:5b40d96b11333570143d98d3a74100fefadb9abb17b27a95dbc9ad33544ec142
@@ -68,7 +31,6 @@ services:
     ports:
       - "5002:5000"
     environment:
-      #- MLFLOW_S3_ENDPOINT_URL=http://minio:9000
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - MLFLOW_S3_ENDPOINT_URL=https://s3.ap-southeast-2.amazonaws.com
@@ -96,20 +58,17 @@ services:
       - llm-monitor
     restart: unless-stopped
 
-  # ngrok_minio:
-  #   image: ngrok/ngrok:latest
-  #   container_name: ngrok_minio
-  #   depends_on:
-  #     - minio
-  #   ports:
-  #     - "4042:4042"  # Ngrok web interface
-  #   environment:
-  #     - NGROK_AUTHTOKEN=${NGROK_AUTH_TOKEN}
-  #   command: http minio:9000
-  #   networks:
-  #     - llm-monitor
-  #   restart: unless-stopped
-
+  # llm-monitor:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: llm-health
+  #   command: >
+  #     curl -O "ki"
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:5000"]
+  #     interval: 5s
+  #     retries: 5
 
 networks:
   llm-monitor:
