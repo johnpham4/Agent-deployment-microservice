@@ -40,10 +40,6 @@ class HealthResponseDTO(BaseModel):
     model_loaded: bool
     memory_usage: Optional[str] = None
 
-class FeedbackRequestDTO(BaseModel):
-    chat_id: int
-    rating: int = Field(..., ge=1, le=5, description="Rating from 1 to 5 stars")
-    feedback_text: Optional[str] = Field(None, max_length=500, description="Optional feedback text")
 
 class ErrorResponseDTO(BaseModel):
     error: str

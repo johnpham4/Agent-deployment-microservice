@@ -44,19 +44,19 @@ services:
     networks:
       - llm-monitor
 
-  ngrok:
-    image: ngrok/ngrok:latest
-    container_name: ngrok
-    depends_on:
-      - mlflow_server
-    ports:
-      - "4040:4040"  # Ngrok web interface
-    environment:
-      - NGROK_AUTHTOKEN=${NGROK_AUTH_TOKEN}
-    command: http mlflow_server:5000
-    networks:
-      - llm-monitor
-    restart: unless-stopped
+  # ngrok:
+  #   image: ngrok/ngrok:latest
+  #   container_name: ngrok
+  #   depends_on:
+  #     - mlflow_server
+  #   ports:
+  #     - "4040:4040"  # Ngrok web interface
+  #   environment:
+  #     - NGROK_AUTHTOKEN=${NGROK_AUTH_TOKEN}
+  #   command: http mlflow_server:5000
+  #   networks:
+  #     - llm-monitor
+  #   restart: unless-stopped
 
   # llm-monitor:
   #   build:

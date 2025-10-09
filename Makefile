@@ -21,17 +21,11 @@ ngrok_mlflow:
 	@echo "Getting ngrok URL..."
 	@curl -s http://localhost:4040/api/tunnels | grep -o '"public_url":"[^"]*"' | cut -d'"' -f4 || echo "Ngrok not ready yet, try again in a few seconds"
 
-ngrok_minio:
-	@echo "Getting ngrok URL..."
-	@url=$$(curl -s http://localhost:4042/api/tunnels | grep -o '"public_url":"[^"]*"' | cut -d'"' -f4); \
-	if [ -n "$$url" ]; then \
-		echo "NGROK_MINIO_URL=$$url" > .env.ngrok; \
-		echo "Ngrok URL saved to .env.ngrok: $$url"; \
-	else \
-		echo "Ngrok not ready yet, try again in a few seconds"; \
-	fi
-make compose:
+compose:
 	- docker compose -f compose.yml up
+
+cloudfare:
+	cloudflared tunnel --url localhost:5002
 
 lab:
 	poetry run jupyter lab --port 8888 --host 0.0.0.0

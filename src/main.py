@@ -6,12 +6,13 @@ import logging
 from contextlib import asynccontextmanager
 import os
 import sys
+from prometheus_fastapi_instrumentator import Instrumentator
+
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from api.api import Router as ChatRouter
-from core.config import settings
-from services.chat_service import chatService
+from api import Router as ChatRouter
+from chat_service import chatService
 
 
 @asynccontextmanager
@@ -50,7 +51,7 @@ app = FastAPI(
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -86,8 +87,10 @@ async def global_exception_handler(request, exc):
 if __name__ == "__main__":
     uvicorn.run(
         "main:app",
-        host=settings.HOST,
-        port=settings.PORT,
-        reload=settings.DEBUG,
+        host="localhost",
+        port=8000,
+        reload=False,
         log_level="info"
     )
+
+

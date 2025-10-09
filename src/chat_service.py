@@ -3,7 +3,6 @@ import torch
 import logging
 import time
 from typing import Optional
-from core.config import settings
 import torch
 import logging
 
@@ -22,7 +21,7 @@ class ChatService:
 
         try:
             if model_path is None:
-                model_path = settings.MODEL_PATH
+                model_path = ""
 
             start_time = time.time()
 
@@ -39,14 +38,8 @@ class ChatService:
             else:
                 self.model = self.model.to("cpu")
                 logger.info("device set to cpu")
-            self.model.config.use_cache = False
-            self.model.config.pretraining_tp = 1
 
             self.tokenizer = AutoTokenizer.from_pretrained(model_path)
-            # self.tokenizer.add_special_tokens({'pad_token': '[PAD]'})
-            # self.tokenizer.pad_token = self.tokenizer.eos_token
-            # self.tokenizer.padding_side = "right"
-            # self.tokenizer.chat_template = settings.CHAT_TEMPLATE
 
             try:
                 self.pipe = pipeline(
@@ -119,9 +112,5 @@ class ChatService:
 
     def get_chat_history(self, session_id: str, db, limit: int = 50):
         pass
-
-    def get_analytics(self, db, days: int = 7):
-        pass
-
 
 chatService = ChatService()

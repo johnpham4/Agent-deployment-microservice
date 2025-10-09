@@ -10,8 +10,10 @@ service:
   port: 80
   targetPort: 8000
 
+
 # Deployment configuration
 replicaCount: 3
+
 
 # Resource limits (reduced for development)
 resources:
@@ -24,7 +26,7 @@ resources:
 
 # Environment variables
 env:
-  MODEL_PATH: "/app/merged_model"
+  MODEL_PATH: "/app/"
   LOG_LEVEL: "INFO"
   DEBUG: "false"
 
@@ -33,7 +35,7 @@ ingress:
   enabled: true
   className: "nginx"
   hosts:
-    - host: multi-agent-microservices.local
+    - host: healthcare-llm.local
       paths:
         - path: /
           pathType: Prefix
