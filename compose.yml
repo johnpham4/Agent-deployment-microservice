@@ -60,6 +60,7 @@ services:
     restart: unless-stopped
 
   fastapi-app:
+    container_name: fastapi_app
     build:
       context: .
       dockerfile: Dockerfile

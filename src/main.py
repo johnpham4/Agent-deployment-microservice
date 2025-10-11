@@ -11,8 +11,8 @@ from prometheus_fastapi_instrumentator import Instrumentator
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from api import Router as ChatRouter
-from chat_service import chatService
+from .api import Router as ChatRouter
+from .chat_service import chatService
 
 
 @asynccontextmanager

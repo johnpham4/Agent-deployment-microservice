@@ -1,6 +1,6 @@
 # Use official Python image with CUDA support if needed
-# FROM  pytorch/pytorch:2.8.0-cuda12.6-cudnn9-runtime
-FROM python:3.11-slim
+FROM  pytorch/pytorch:2.8.0-cuda12.6-cudnn9-runtime
+# FROM python:3.11-slim
 
 WORKDIR /app
 

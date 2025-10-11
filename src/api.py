@@ -5,8 +5,8 @@ import time
 from typing import Optional
 
 # Import models và services
-from dto import ChatRequestDTO, ChatResponseDTO, ErrorResponseDTO
-from chat_service import chatService
+from .dto import ChatRequestDTO, ChatResponseDTO, ErrorResponseDTO
+from .chat_service import chatService
 
 # Tạo router
 router = APIRouter()
