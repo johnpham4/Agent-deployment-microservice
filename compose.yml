@@ -31,6 +31,7 @@ services:
     ports:
       - "5002:5000"
     environment:
+      - MLFLOW_HTTP_REQUEST_POOL_MAXSIZE=50
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - MLFLOW_S3_ENDPOINT_URL=https://s3.ap-southeast-2.amazonaws.com
@@ -44,31 +45,48 @@ services:
     networks:
       - llm-monitor
 
-  # ngrok:
-  #   image: ngrok/ngrok:latest
-  #   container_name: ngrok
-  #   depends_on:
-  #     - mlflow_server
-  #   ports:
-  #     - "4040:4040"  # Ngrok web interface
-  #   environment:
-  #     - NGROK_AUTHTOKEN=${NGROK_AUTH_TOKEN}
-  #   command: http mlflow_server:5000
-  #   networks:
-  #     - llm-monitor
-  #   restart: unless-stopped
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: ngrok
+    depends_on:
+      - mlflow_server
+    ports:
+      - "4040:4040"  # Ngrok web interface
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTH_TOKEN}
+    command: http mlflow_server:5000
+    networks:
+      - llm-monitor
+    restart: unless-stopped
 
-  # llm-monitor:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   container_name: llm-health
-  #   command: >
-  #     curl -O "ki"
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:5000"]
-  #     interval: 5s
-  #     retries: 5
+  fastapi-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "8000:8000"
+    networks:
+      - llm-monitor
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./monitor/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - llm-monitor
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - llm-monitor
 
 networks:
   llm-monitor:

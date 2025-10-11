@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import uvicorn
-import logging
+from loguru import logger
 from contextlib import asynccontextmanager
 import os
 import sys
@@ -18,25 +18,20 @@ from chat_service import chatService
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Handle startup and shutdown events"""
-    # Startup
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
-    logging.info("Starting QA Chatbot service...")
+    logger.info("Starting QA Chatbot service...")
 
     # Load model if needed (uncomment để load model khi startup)
     # try:
     #     await chatService.load_model()
-    #     logging.info("Model loaded on startup")
+    #     logger.info("Model loaded on startup")
     # except Exception as e:
-    #     logging.warning(f"Could not load model on startup: {e}")
-    #     logging.info("Model will be loaded on first request")
+    #     logger.warning(f"Could not load model on startup: {e}")
+    #     logger.info("Model will be loaded on first request")
 
     yield
 
     # Shutdown
-    logging.info("Shutting down QA Chatbot service...")
+    logger.info("Shutting down QA Chatbot service...")
 
 
 app = FastAPI(
@@ -48,6 +43,8 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
+Instrumentator().instrument(app).expose(app)
+
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
@@ -58,7 +55,7 @@ app.add_middleware(
 )
 
 # Include routers
-app.include_router(ChatRouter, prefix="/api/v1/chat", tags=["chat"])
+# app.include_router(ChatRouter, prefix="/api/v1/chat", tags=["chat"])
 
 # Health check endpoint
 @app.get("/health")
@@ -78,7 +75,7 @@ async def root():
 # Global exception handler
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc):
-    logging.error(f"Global exception: {exc}")
+    logger.error(f"Global exception: {exc}")
     return JSONResponse(
         status_code=500,
         content={"detail": "Internal server error"}

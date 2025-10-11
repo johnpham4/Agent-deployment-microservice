@@ -1,0 +1,34 @@
+artifact_path: mlflow-artifacts:/1/models/m-4f5252968d9944eaba5a4e92820521c3/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.transformers
+    python_version: 3.12.11
+  transformers:
+    code: null
+    components:
+    - tokenizer
+    framework: pt
+    instance_type: Text2TextGenerationPipeline
+    model_binary: model
+    pipeline_model_type: T5ForConditionalGeneration
+    source_model_name: merged_model
+    task: text2text-generation
+    tokenizer_type: T5TokenizerFast
+    torch_dtype: null
+    transformers_version: 4.57.0
+is_signature_from_type_hint: false
+mlflow_version: 3.4.0
+model_id: m-4f5252968d9944eaba5a4e92820521c3
+model_size_bytes: 427789509
+model_uuid: m-4f5252968d9944eaba5a4e92820521c3
+prompts: null
+run_id: 180f6e54b70e49a3933ef74bf88cb5e7
+signature:
+  inputs: '[{"type": "string", "required": true}]'
+  outputs: '[{"type": "string", "required": true}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2025-10-10 18:46:48.884414'

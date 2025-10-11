@@ -7,13 +7,6 @@ export
 make env:
 	poetry env use .venv/bin/python
 
-ml-platform-up:
-	docker compose -f compose.yml up -d mlflow_server
-
-ml-platform-logs:
-# For make command that follows logs, if not add prefix '-' then when interrupet the command, it will complain with Error 130
-	- docker compose -f compose.yml logs -f
-
 ngrok:
 	docker compose -f compose.yml up -d ngrok
 
@@ -22,13 +15,13 @@ ngrok_mlflow:
 	@curl -s http://localhost:4040/api/tunnels | grep -o '"public_url":"[^"]*"' | cut -d'"' -f4 || echo "Ngrok not ready yet, try again in a few seconds"
 
 compose:
-	- docker compose -f compose.yml up
+	- docker compose -f compose.yml up -d
 
 cloudfare:
 	cloudflared tunnel --url localhost:5002
 
 lab:
-	poetry run jupyter lab --port 8888 --host 0.0.0.0
+	jupyter lab --port 8888 --host 0.0.0.0
 
 down:
 	docker compose -f compose.yml down

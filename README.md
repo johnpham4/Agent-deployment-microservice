@@ -9,6 +9,8 @@
 # Start services
 ## Common services
 ```shell
+conda activate /mnt/d/projects/monitor_2_deployment/.venv
+pip install -r requirements.txt
 # Create data directory by current user to avoid permission issue when Docker Compose creates the data folder itself
 mkdir -p data
 

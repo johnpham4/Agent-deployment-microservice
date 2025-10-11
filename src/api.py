@@ -1,16 +1,12 @@
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import JSONResponse
-import logging
+from loguru import logger
 import time
 from typing import Optional
 
 # Import models và services
-from model.dto import ChatRequestDTO, ChatResponseDTO, ErrorResponseDTO
-from services.chat_service import chatService
-from core.config import settings
-
-# Setup logging
-logger = logging.getLogger(__name__)
+from dto import ChatRequestDTO, ChatResponseDTO, ErrorResponseDTO
+from chat_service import chatService
 
 # Tạo router
 router = APIRouter()
@@ -93,52 +89,52 @@ async def health_check():
             "error": str(e),
         }
 
-@router.post("/model/load")
-async def load_model(model_path: Optional[str] = None):
-    """
-    Load or reload the AI model
-    """
-    try:
-        logger.info(f"Loading model from path: {model_path or settings.MODEL_PATH}")
-        await chatService.load_model(model_path)
+# @router.post("/model/load")
+# async def load_model(model_path: Optional[str] = None):
+#     """
+#     Load or reload the AI model
+#     """
+#     try:
+#         logger.info(f"Loading model from path: {model_path or settings.MODEL_PATH}")
+#         await chatService.load_model(model_path)
 
-        return {
-            "success": True,
-            "message": "Model loaded successfully",
-            "model_path": model_path or settings.MODEL_PATH,
-        }
+#         return {
+#             "success": True,
+#             "message": "Model loaded successfully",
+#             "model_path": model_path or settings.MODEL_PATH,
+#         }
 
-    except Exception as e:
-        logger.error(f"Error loading model: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to load model: {str(e)}"
-        )
+#     except Exception as e:
+#         logger.error(f"Error loading model: {e}")
+#         raise HTTPException(
+#             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#             detail=f"Failed to load model: {str(e)}"
+#         )
 
-@router.get("/model/status")
-async def get_model_status():
-    """
-    Get model status and information
-    """
-    try:
-        import os
-        model_path = settings.MODEL_PATH
-        path_exists = os.path.exists(model_path)
+# @router.get("/model/status")
+# async def get_model_status():
+#     """
+#     Get model status and information
+#     """
+#     try:
+#         import os
+#         model_path = settings.MODEL_PATH
+#         path_exists = os.path.exists(model_path)
 
-        return {
-            "model_loaded": chatService.is_model_loaded(),
-            "model_path": model_path,
-            "path_exists": path_exists,
-            "absolute_path": os.path.abspath(model_path),
-            "working_dir": os.getcwd(),
-            "device": chatService.device if hasattr(chatService, 'device') else "unknown",
-        }
-    except Exception as e:
-        logger.error(f"Error getting model status: {e}")
-        return {
-            "error": str(e),
-            "timestamp": time.time()
-        }
+#         return {
+#             "model_loaded": chatService.is_model_loaded(),
+#             "model_path": model_path,
+#             "path_exists": path_exists,
+#             "absolute_path": os.path.abspath(model_path),
+#             "working_dir": os.getcwd(),
+#             "device": chatService.device if hasattr(chatService, 'device') else "unknown",
+#         }
+#     except Exception as e:
+#         logger.error(f"Error getting model status: {e}")
+#         return {
+#             "error": str(e),
+#             "timestamp": time.time()
+        # }
 
 # Export router
 Router = router
