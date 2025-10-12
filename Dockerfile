@@ -1,26 +1,24 @@
 # Use official Python image with CUDA support if needed
-FROM  pytorch/pytorch:2.8.0-cuda12.6-cudnn9-runtime
+# FROM  pytorch/pytorch:2.8.0-cuda12.6-cudnn9-runtime
+FROM nvidia/cuda:12.1.0-runtime-ubuntu22.04
 # FROM python:3.11-slim
+
+# Cài đặt Python và pip
+RUN apt-get update && apt-get install -y python3 python3-pip && \
+    ln -s /usr/bin/python3 /usr/bin/python && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-COPY requirements.txt /app/requirements.txt
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt && rm -rf /root/.cache/pip
 
 COPY src/ /app/src/
 
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Create non-root user for security
-RUN adduser --disabled-password --gecos '' appuser && \
-    chown -R appuser:appuser /app
+# Tạo user không root
+RUN useradd -m appuser && chown -R appuser:appuser /app
 USER appuser
 
-# Expose port
 EXPOSE 8000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
-
-# Default command
 CMD ["python", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]

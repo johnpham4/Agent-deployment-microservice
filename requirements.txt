@@ -1,8 +1,6 @@
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
 pydantic==2.5.0
-pydantic-settings==2.1.0
-sqlalchemy==2.0.23
 transformers>=4.44.0
 # accelerate>=0.33.0
 # torch>=2.0.0
@@ -10,7 +8,6 @@ transformers>=4.44.0
 prometheus-fastapi-instrumentator
 loguru
 gradio
-jupyterlab
 mlflow
 boto3
 dotenv

@@ -6,6 +6,7 @@ from loguru import logger
 from contextlib import asynccontextmanager
 import os
 import sys
+import socket
 from prometheus_fastapi_instrumentator import Instrumentator
 
 
@@ -66,11 +67,9 @@ async def health_check():
 @app.get("/")
 async def root():
     """Root endpoint"""
-    return {
-        "message": "QA Chatbot Service",
-        "version": "1.0.0",
-        "docs": "/docs"
-    }
+    helloMessage = f"Hello from the ${socket.gethostname()}"
+    return helloMessage
+
 
 # Global exception handler
 @app.exception_handler(Exception)
