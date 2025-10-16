@@ -1,18 +1,22 @@
-# Use official Python image with CUDA support if needed
-# FROM  pytorch/pytorch:2.8.0-cuda12.6-cudnn9-runtime
-FROM nvidia/cuda:12.1.0-runtime-ubuntu22.04
-# FROM python:3.11-slim
+FROM python:3.11-slim
 
-# Cài đặt Python và pip
-RUN apt-get update && apt-get install -y python3 python3-pip && \
-    ln -s /usr/bin/python3 /usr/bin/python && \
-    rm -rf /var/lib/apt/lists/*
-
+# Thiết lập thư mục làm việc
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt && rm -rf /root/.cache/pip
+# Cài đặt gói cần thiết cho build torch, tránh lỗi pip
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
+# Copy và cài requirements
+COPY requirements.txt .
+
+# Cài đặt PyTorch CPU-only và các thư viện khác
+RUN pip install --no-cache-dir torch==2.4.0+cpu --extra-index-url https://download.pytorch.org/whl/cpu \
+    && pip install --no-cache-dir -r requirements.txt \
+    && rm -rf /root/.cache/pip
+
+# Copy mã nguồn
 COPY src/ /app/src/
 
 # Tạo user không root
@@ -21,4 +25,5 @@ USER appuser
 
 EXPOSE 8000
 
+# Lệnh chạy chính
 CMD ["python", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]

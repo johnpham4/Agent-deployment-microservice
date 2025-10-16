@@ -14,6 +14,8 @@ pip install -r requirements.txt
 # Create data directory by current user to avoid permission issue when Docker Compose creates the data folder itself
 mkdir -p data
 
+docker network create monitoring
+
 # Start supporting services
 make ngrok && make ml-platform-up && make ml-platform-logs
 # Wait until you see "Booting worker with pid..." then you can Ctrl + C to exit the logs following process

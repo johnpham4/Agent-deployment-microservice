@@ -1,97 +1,43 @@
+version: '3.8'
+
 services:
-  mlflow_db:
-    restart: always
-    image: mysql/mysql-server@sha256:5b40d96b11333570143d98d3a74100fefadb9abb17b27a95dbc9ad33544ec142
-    container_name: mlflow_db_llm
-    ports:
-      - "3306:3306"
-    environment:
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-    volumes:
-      #- ./data/mlflow/dbdata:/var/lib/mysql
-      - mlflow_db_data:/var/lib/mysql
-    networks:
-      - llm-monitor
-
-  mlflow_server:
-    restart: always
-    build: ./mlflow
-    image: mlflow_server
-    container_name: mlflow_server
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:5000"]
-    #   interval: 5s
-    #   retries: 5
-    # depends_on:
-    #   - mlflow_mc
-    #   - mlflow_db
-    ports:
-      - "5002:5000"
-    environment:
-      - MLFLOW_HTTP_REQUEST_POOL_MAXSIZE=50
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - MLFLOW_S3_ENDPOINT_URL=https://s3.ap-southeast-2.amazonaws.com
-    command: >
-      mlflow server
-        --backend-store-uri mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mlflow_db:3306/${MYSQL_DATABASE}
-        --artifacts-destination s3://mlflow-artifacts-monitor
-        --host 0.0.0.0
-        --port 5000
-#         --serve-artifacts (bỏ vì không cần serve local)
-    networks:
-      - llm-monitor
-
-  ngrok:
-    image: ngrok/ngrok:latest
-    container_name: ngrok
-    depends_on:
-      - mlflow_server
-    ports:
-      - "4040:4040"  # Ngrok web interface
-    environment:
-      - NGROK_AUTHTOKEN=${NGROK_AUTH_TOKEN}
-    command: http mlflow_server:5000
-    networks:
-      - llm-monitor
-    restart: unless-stopped
-
-  fastapi-app:
-    container_name: fastapi_app
+  # FastAPI App Instance 1
+  fastapi-app-1:
+    container_name: fastapi_app_instance_1
     build:
       context: .
       dockerfile: Dockerfile
     environment:
       - PYTHONUNBUFFERED=1
+      - INSTANCE_ID=instance_1
+      - INSTANCE_NAME=FastAPI-App-1
     ports:
-      - "8000:8000"
+      - "8001:8000"
     networks:
       - llm-monitor
+      - monitoring
 
-  prometheus:
-    image: prom/prometheus:latest
-    volumes:
-      - ./monitor/prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - "9090:9090"
-    networks:
-      - llm-monitor
-
-  grafana:
-    image: grafana/grafana:latest
-    ports:
-      - "3000:3000"
+  # FastAPI App Instance 2
+  fastapi-app-2:
+    container_name: fastapi_app_instance_2
+    build:
+      context: .
+      dockerfile: Dockerfile
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - PYTHONUNBUFFERED=1
+      - INSTANCE_ID=instance_2
+      - INSTANCE_NAME=FastAPI-App-2
+    ports:
+      - "8002:8000"
     networks:
       - llm-monitor
+      - monitoring
 
 networks:
   llm-monitor:
     driver: bridge
+  monitoring:
+    external: true
 
 volumes:
   mlflow_db_data:

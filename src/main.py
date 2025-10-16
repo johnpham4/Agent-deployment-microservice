@@ -44,6 +44,7 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
+# Prometheus instrumentation
 Instrumentator().instrument(app).expose(app)
 
 # CORS middleware
@@ -62,13 +63,29 @@ app.add_middleware(
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
-    return {"status": "healthy", "service": "qa-chatbot"}
+    instance_id = os.getenv("INSTANCE_ID", "unknown")
+    instance_name = os.getenv("INSTANCE_NAME", "FastAPI-App")
+
+    return {
+        "status": "healthy",
+        "service": "qa-chatbot",
+        "instance_id": instance_id,
+        "instance_name": instance_name
+    }
 
 @app.get("/")
 async def root():
     """Root endpoint"""
-    helloMessage = f"Hello from the ${socket.gethostname()}"
-    return helloMessage
+    instance_id = os.getenv("INSTANCE_ID", "unknown")
+    instance_name = os.getenv("INSTANCE_NAME", "FastAPI-App")
+    hostname = socket.gethostname()
+
+    return {
+        "message": f"Hello from {instance_name}",
+        "instance_id": instance_id,
+        "hostname": hostname,
+        "version": "1.0.0"
+    }
 
 
 # Global exception handler
@@ -83,10 +100,8 @@ async def global_exception_handler(request, exc):
 if __name__ == "__main__":
     uvicorn.run(
         "main:app",
-        host="localhost",
+        host="0.0.0.0",
         port=8000,
         reload=False,
         log_level="info"
     )
-
-

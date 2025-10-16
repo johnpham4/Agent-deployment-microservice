@@ -56,5 +56,4 @@ class Peft_Config(BaseModel):
     save_steps: int = 5000
     logging_steps: int = 50
 
-    # Device mapping (None -> let accelerate/transformers decide, or provide mapping)
     device_map: Optional[Dict[str, int]] = None
