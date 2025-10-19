@@ -4,10 +4,10 @@
 include .env
 export
 
-make env:
+env:
 	poetry env use .venv/bin/python
 
-mlflow:
+mlflow_metric:
 	docker compose -f mlflow/compose.yml up -d
 
 monitor:
@@ -21,7 +21,7 @@ down:
 	docker compose -f mlflow/compose.yml down &&
 	docker compose -f compose.yml down
 
-ngrok_mlflow:
+ngrok:
 	@echo "Getting ngrok URL..."
 	@curl -s http://localhost:4040/api/tunnels | grep -o '"public_url":"[^"]*"' | cut -d'"' -f4 || echo "Ngrok not ready yet, try again in a few seconds"
 

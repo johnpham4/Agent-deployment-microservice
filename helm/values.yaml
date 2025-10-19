@@ -1,52 +1,73 @@
-# Image configuration
-image:
-  repository: minhjohn427/chat-service
-  tag: "0.0.1"
-  pullPolicy: Always
+# QA Chatbot Stack Configuration
+app:
+  name: qa-chatbot
+  replicaCount: 2
 
-# Service configuration
-service:
-  type: ClusterIP
-  port: 80
-  targetPort: 8000
+  image:
+    repository: qa-chatbot
+    pullPolicy: IfNotPresent
+    tag: "latest"
 
+  service:
+    type: ClusterIP
+    ports:
+      - name: app-1
+        port: 8001
+        targetPort: 8000
+      - name: app-2
+        port: 8002
+        targetPort: 8000
 
-# Deployment configuration
-replicaCount: 3
+  env:
+    - name: PORT
+      value: "8000"
+    - name: LOG_LEVEL
+      value: "INFO"
+    - name: DEBUG
+      value: "false"
+    # S3 and Model configs will be loaded from envFile
 
+  # Environment file path (will be set by Jenkins)
+  envFile: ""
 
-# Resource limits (reduced for development)
-resources:
-  limits:
-    cpu: 500m
-    memory: 1Gi
-  requests:
-    cpu: 100m
-    memory: 512Mi
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 512Mi
 
-# Environment variables
-env:
-  MODEL_PATH: "/app/"
-  LOG_LEVEL: "INFO"
-  DEBUG: "false"
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 30
+    periodSeconds: 10
 
-# Ingress configuration
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 5
+    periodSeconds: 5
+
+# Ingress Configuration
 ingress:
   enabled: true
   className: "nginx"
   hosts:
-    - host: healthcare-llm.local
+    - host: qa-chatbot.local
       paths:
         - path: /
           pathType: Prefix
+          service: qa-chatbot
   tls: []
 
-# Persistence for model storage (disabled for now)
-persistence:
-  enabled: false
-  storageClass: ""
-  size: 10Gi
-  accessMode: ReadWriteOnce
+# Security Context
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
 
 # Health checks
 healthCheck:

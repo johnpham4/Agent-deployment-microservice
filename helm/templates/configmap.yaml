@@ -1,0 +1,28 @@
+# Application Configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.app.name }}-config
+  labels:
+    app: {{ .Values.app.name }}
+    component: config
+data:
+  app.properties: |
+    # QA Chatbot Configuration
+    log.level=INFO
+    debug.enabled=false
+    metrics.enabled=true
+
+---
+{{- if .Values.app.envFile }}
+# Environment Configuration from File
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.app.name }}-env-config
+  labels:
+    app: {{ .Values.app.name }}
+    component: env-config
+data:
+{{ (.Files.Get .Values.app.envFile) | indent 2 }}
+{{- end }}

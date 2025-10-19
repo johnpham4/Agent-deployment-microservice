@@ -1,15 +1,22 @@
+# QA Chatbot Service
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "multi-agent-microservices.fullname" . }}
+  name: {{ .Values.app.name }}
   labels:
-    {{- include "multi-agent-microservices.labels" . | nindent 4 }}
+    app: {{ .Values.app.name }}
+    component: api
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.app.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: {{ .Values.service.targetPort }}
-      protocol: TCP
-      name: http
+  {{- range .Values.app.service.ports }}
+  - name: {{ .name }}
+    port: {{ .port }}
+    targetPort: {{ .targetPort }}
+    protocol: TCP
+  {{- end }}
   selector:
-    {{- include "multi-agent-microservices.selectorLabels" . | nindent 4 }}
+    app: {{ .Values.app.name }}
+    component: api
+
+

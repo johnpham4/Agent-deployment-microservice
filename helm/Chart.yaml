@@ -1,9 +1,7 @@
 apiVersion: v2
-name: healthcare-llm
-description: monitor and deployment of healcare llm
-
+name: qa-chatbot-stack
+description: QA Chatbot microservice with monitoring stack
 type: application
-
 version: 0.1.0
 appVersion: "1.0.0"
 maintainers:
