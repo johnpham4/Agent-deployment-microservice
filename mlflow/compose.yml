@@ -2,6 +2,8 @@ services:
   mlflow_db:
     restart: always
     image: mysql/mysql-server@sha256:5b40d96b11333570143d98d3a74100fefadb9abb17b27a95dbc9ad33544ec142
+    env_file:
+      - .env
     container_name: mlflow_db_llm
     ports:
       - "3306:3306"
@@ -20,6 +22,8 @@ services:
     build: .
     image: mlflow_server
     container_name: mlflow_server
+    env_file:
+      - .env
     ports:
       - "5002:5000"
     environment:

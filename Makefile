@@ -1,9 +1,6 @@
 .PHONY:
 .ONESHELL:
 
-include .env
-export
-
 env:
 	poetry env use .venv/bin/python
 
@@ -23,7 +20,7 @@ down:
 
 ngrok:
 	@echo "Getting ngrok URL..."
-	@curl -s http://localhost:4040/api/tunnels | grep -o '"public_url":"[^"]*"' | cut -d'"' -f4 || echo "Ngrok not ready yet, try again in a few seconds"
+	@curl -s http://localhost:4040/api/tunnels 2>/dev/null | grep -o '"public_url":"[^"]*"' | cut -d'"' -f4 || echo "Ngrok not ready yet, try again in a few seconds"
 
 
 cloudfare:
